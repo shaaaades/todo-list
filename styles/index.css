@@ -1,0 +1,57 @@
+#bootstrap-overrides {
+  font-family: "Inter", sans-serif;
+  background-color: #B07289;
+  margin: 20px;
+  text-align: center;
+}
+
+/* Bootstrap */
+.container-sm {
+  background-color: #FFFFFE;
+  border-radius: 24px;
+  width: 95vw;
+  height: 95vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;   
+}
+
+.intro-quote, .intro-quote-author {
+  font-weight: 900;
+  font-size: 20px;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.intro-quote-author {
+  text-transform: uppercase;
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.intro-text {
+  margin: 100px 15px;
+  border: 1px solid #B07289;
+  border-radius: 20px;
+  background-color: #F8F2F4;
+}
+
+.intro-text p {
+  font-weight: 500;
+  font-size: 18px;
+  margin: 10px 20px 10px;
+  text-align: justify;
+}
+
+.intro-button {
+  text-transform: uppercase;
+  font-size: 18px;
+  border-radius: 10px;
+  padding: 5px 20px;
+  background-color: #F7CFD8;
+}
+
+.intro-button:hover {
+  background-color: #F4CCE9;
+}
