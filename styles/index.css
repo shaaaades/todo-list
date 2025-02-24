@@ -1,3 +1,67 @@
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter_Thin.woff") format("woff");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter_ExtraLight.woff") format("woff");
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter_Light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter_Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter_Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter_SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter_Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter_ExtraBold.woff") format("woff");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter_Black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+}
+
 #bootstrap-overrides {
   font-family: "Inter", sans-serif;
   background-color: #B07289;
@@ -5,7 +69,6 @@
   text-align: center;
 }
 
-/* Bootstrap */
 .container-sm {
   background-color: #FFFFFE;
   border-radius: 24px;
@@ -18,28 +81,29 @@
 }
 
 .intro-quote, .intro-quote-author {
-  font-weight: 900;
-  font-size: 20px;
+  font-weight: 700;
+  font-size: 18px;
   margin: 0;
   letter-spacing: 1px;
+  color: #B10642;
 }
 
 .intro-quote-author {
   text-transform: uppercase;
-  margin-top: 20px;
-  font-size: 18px;
+  margin-top: 15px;
+  font-size: 14px;
 }
 
 .intro-text {
   margin: 100px 15px;
-  border: 1px solid #B07289;
   border-radius: 20px;
-  background-color: #F8F2F4;
+  box-shadow: rgba(90, 99, 99, 0.7) 5px 5px 10px 5px;
+  background-color: #faeef2;
 }
 
 .intro-text p {
-  font-weight: 500;
-  font-size: 18px;
+  font-weight: 400;
+  font-size: 16px;
   margin: 10px 20px 10px;
   text-align: justify;
 }
@@ -49,9 +113,13 @@
   font-size: 18px;
   border-radius: 10px;
   padding: 5px 20px;
-  background-color: #F7CFD8;
+  background-color: #E53170;
+  color: #FFF;
+  border: none;
+  height: 50px;
+  letter-spacing: 1px;
 }
 
 .intro-button:hover {
-  background-color: #F4CCE9;
+  background-color: #AC1754;
 }
