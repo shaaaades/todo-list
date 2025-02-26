@@ -66,7 +66,6 @@
   font-family: "Inter", sans-serif;
   background-color: #B07289;
   margin: 20px;
-  text-align: center;
 }
 
 .container-sm {
@@ -74,52 +73,4 @@
   border-radius: 24px;
   width: 95vw;
   height: 95vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;   
-}
-
-.intro-quote, .intro-quote-author {
-  font-weight: 700;
-  font-size: 18px;
-  margin: 0;
-  letter-spacing: 1px;
-  color: #B10642;
-}
-
-.intro-quote-author {
-  text-transform: uppercase;
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-.intro-text {
-  margin: 100px 15px;
-  border-radius: 20px;
-  box-shadow: rgba(90, 99, 99, 0.7) 5px 5px 10px 5px;
-  background-color: #faeef2;
-}
-
-.intro-text p {
-  font-weight: 400;
-  font-size: 16px;
-  margin: 10px 20px 10px;
-  text-align: justify;
-}
-
-.intro-button {
-  text-transform: uppercase;
-  font-size: 18px;
-  border-radius: 10px;
-  padding: 5px 20px;
-  background-color: #E53170;
-  color: #FFF;
-  border: none;
-  height: 50px;
-  letter-spacing: 1px;
-}
-
-.intro-button:hover {
-  background-color: #AC1754;
 }
