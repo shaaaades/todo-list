@@ -11,7 +11,7 @@
 </head>
 <body id="bootstrap-overrides">
   <div class="container-sm">
-    <div class="mainpage-container">
+    <div id="mainpage-container" class="mainpage-container">
       <h1 class="mainpage-title">To Do List</h1>
       <h3 class="mainpage-subtitle">This Week</h3>
       <h4 class="mainpage-date">Monday, 12th May</h4>
@@ -34,6 +34,7 @@
 
     <!-- Modal for adding tasks -->
     <form method="dialog" id="add-task-modal" class="add-task-modal">
+      <img src="/todo-list/assets/icons/close-icon.svg" id="close-icon" class="close-icon" alt="Close Task">
       <p>TASK NAME</p>
       <input type="text" id="task-name" placeholder="Water plants">
       <p>TASK DATE</p>

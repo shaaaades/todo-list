@@ -3,6 +3,10 @@ const taskNameElem = document.querySelector("#task-name");
 const taskDateElem = document.querySelector("#task-date")
 const taskPriorityElem = document.querySelector("#task-priority");
 const addTask = document.getElementById("add-task-button");
+const form = document.getElementById("add-task-modal");
+const task = document.getElementById("add-task");
+const closeIcon = document.getElementById("close-icon");
+const mainpageContainer = document.getElementById("mainpage-container");
 
 addTask.addEventListener("click", function(e) {
   e.preventDefault();
@@ -26,13 +30,13 @@ addTask.addEventListener("click", function(e) {
       errorMessage.innerText = "Please fill in all fields to proceed."
 
       addTask.parentNode.insertBefore(errorMessage, addTask.nextSibling);
+
+      setTimeout(function(){
+        document.getElementById("error-message").remove();
+      }, 3000);
     } 
     return;
-  } else {
-    // Remove the error message if it exists
-    let errorMessage = document.getElementById("error-message");
-    errorMessage.remove();
-  }
+  } 
 
   // Retrieve tasks before adding a new task
   let retrievedTasks = localStorage.getItem("taskDetails");
@@ -44,20 +48,32 @@ addTask.addEventListener("click", function(e) {
   } else {
     localStorage.setItem("taskDetails", JSON.stringify(taskDetails));
   }
+
+  // Check if the tasks are successfully saved
+  if (retrievedTasks) {
+    form.style.display = "none"
+    form.reset();
+
+    // To show confirmation message once task is added successfully
+    let popupMessage = document.createElement("p");
+    popupMessage.setAttribute("id", "popup-message")
+    popupMessage.innerText = "Task added successfully.";
+    mainpageContainer.style.cursor = "not-allowed"
+
+    form.parentNode.insertBefore(popupMessage, form.nextSibling);
+
+    setTimeout(function(){
+      document.getElementById("popup-message").remove();
+      mainpageContainer.style.cursor = "pointer"
+    }, 3000);
+  } 
 })
 
-// // To show add task modal when clicking add task icon
-// function addTask() {
-//   let task = document.getElementById("add-task");
-//   task.addEventListener("click", function() {
-//     let addTaskModal = document.getElementById("add-task-modal");
-//     if (addTaskModal.style.display === "none") {
-//       addTaskModal.style.display = "block";
-//     } 
-//     else {
-//       addTaskModal.style.display = "none";
-//     }
-//   })
-// }
+task.addEventListener("click", function() {
+  form.style.display = "flex"
+})
 
-// export default addTask();
+closeIcon.addEventListener("click", function() {
+  form.style.display = "none"
+  form.reset();
+})

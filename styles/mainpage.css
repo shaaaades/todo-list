@@ -6,6 +6,7 @@
   color: #FF0000;
   font-weight: 300;
   text-align: center;
+  margin: 0;
 }
 
 .container-sm {
@@ -82,11 +83,11 @@
 /* For add tasks modal */
 .add-task-modal {
   box-shadow: rgba(99, 99, 99, 0.2) 10px 20px 100px 100px;
-  padding: 15px;
+  padding: 30px 15px 15px;
   margin: 8px;
   z-index: 1000001;
   position: relative;
-  display: flex;
+  display: none;
   flex-direction: column;
   background-color: #FFFFFF;
   bottom: 170px;
@@ -132,4 +133,25 @@
 
 .add-task-button:hover {
   background-color: #AC1754
+}
+
+.close-icon {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 20px;
+  top: 15px;
+}
+
+#popup-message {
+  z-index: 1000001;
+  background-color: #E53170;
+  color: #FFF;
+  border-radius: 8px;
+  padding: 10px;
+  position: relative;
+  margin: 8px;
+  bottom: 240px;
+  text-align: center;
+  box-shadow: rgba(99, 99, 99, 0.2) 10px 20px 100px 100px;
 }
