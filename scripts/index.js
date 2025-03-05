@@ -1,7 +1,7 @@
-const myButton = () => {
-  let button = document.getElementById("intro-button");
-  button.addEventListener("click", function(){
-      window.location.href = "../todo-list/mainpage.html"
-  })
-}
-export default myButton();
+let button = document.getElementById("intro-button");
+let taskTitle = document.getElementById("task-title");
+
+button.addEventListener("click", function(){
+  window.location.href = "../todo-list/mainpage.html"
+});
+

@@ -7,6 +7,14 @@ const form = document.getElementById("add-task-modal");
 const task = document.getElementById("add-task");
 const closeIcon = document.getElementById("close-icon");
 const mainpageContainer = document.getElementById("mainpage-container");
+const taskList = document.getElementById("task-list");
+const body = document.getElementById("bootstrap-overrides");
+
+let retrievedTasks = localStorage.getItem("taskDetails");
+let updatedTasks = JSON.parse(retrievedTasks);
+
+console.log("r", retrievedTasks);
+console.log("u", updatedTasks)
 
 addTask.addEventListener("click", function(e) {
   e.preventDefault();
@@ -35,13 +43,9 @@ addTask.addEventListener("click", function(e) {
         document.getElementById("error-message").remove();
       }, 3000);
     } 
-    return;
   } 
 
   // Retrieve tasks before adding a new task
-  let retrievedTasks = localStorage.getItem("taskDetails");
-  let updatedTasks = JSON.parse(retrievedTasks);
-
   if(retrievedTasks !== null) {
     let tasks = [...updatedTasks, ...taskDetails];
     localStorage.setItem("taskDetails", JSON.stringify(tasks));
@@ -67,6 +71,30 @@ addTask.addEventListener("click", function(e) {
       mainpageContainer.style.cursor = "pointer"
     }, 3000);
   } 
+
+  // // Contain the task lists into one container
+  // let taskContainerWrapper = document.createElement("div");
+  // taskContainerWrapper.classList.add("task-container-wrapper");
+
+  // updatedTasks.forEach(item => {
+  //   // Create a container for every task 
+  //   let taskContainer = document.createElement("div"); 
+  //   taskContainer.setAttribute("id", "task-container");
+  //   taskContainerWrapper.appendChild(taskContainer);
+
+  //   taskContainer.innerHTML += 
+  //   `<div class="task-list">
+  //     <h1>${item.taskName}</h1>
+  //     <h3>${item.taskPriority}</h3>
+  //   </div>
+  //   <div class="task-icons">
+  //     <img src="../todo-list/assets/icons/edit-task-icon.svg" alt="Edit Task">
+  //     <img src="../todo-list/assets/icons/delete-task-icon.svg" alt="Delete Task">
+  //   </div>
+  //   `
+
+  //   document.getElementById("mainpage-date").appendChild(taskContainerWrapper);
+  // })
 })
 
 task.addEventListener("click", function() {
@@ -76,4 +104,39 @@ task.addEventListener("click", function() {
 closeIcon.addEventListener("click", function() {
   form.style.display = "none"
   form.reset();
+})
+
+window.addEventListener("load", function() {
+  // Contain the task lists into one container
+  let taskContainerWrapper = document.createElement("div");
+  taskContainerWrapper.classList.add("task-container-wrapper");
+
+  if(updatedTasks !== null) {
+    updatedTasks.forEach(item => {
+      // Create a container for every task 
+      let taskContainer = document.createElement("div"); 
+      taskContainer.setAttribute("id", "task-container");
+      taskContainerWrapper.appendChild(taskContainer);
+  
+      taskContainer.innerHTML += 
+      `<div class="task-list">
+        <h1>${item.taskName}</h1>
+        <h3>${item.taskPriority}</h3>
+      </div>
+      <div class="task-icons">
+        <img src="../todo-list/assets/icons/edit-task-icon.svg" alt="Edit Task">
+        <img src="../todo-list/assets/icons/delete-task-icon.svg" alt="Delete Task">
+      </div>
+      `
+  
+      document.getElementById("mainpage-date").appendChild(taskContainerWrapper);
+    })
+  } else {
+    // Display that there are no tasks displayed
+    let noTasksElement = document.createElement("div");
+    noTasksElement.setAttribute("id", "no-tasks-element");
+
+    noTasksElement.innerText = "No tasks displayed"
+    document.getElementById("mainpage-date").appendChild(noTasksElement);
+  }
 })

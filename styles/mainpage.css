@@ -14,7 +14,7 @@
 }
 
 .mainpage-container {
-  padding: 30px 8px;
+  padding: 30px 10px;
 }
 
 .mainpage-title {
@@ -37,17 +37,26 @@
   color: #E53170;
 }
 
-.task-container {
+#task-container {
   padding: 15px 15px 5px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   border-radius: 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin: 20px 5px 15px;
+}
+
+.task-container-wrapper {
+  overflow-y: auto;
+  max-height: 450px;
+  margin-top: 10px;
 }
 
 .task-list h1{
   font-size: 14px;
+  font-weight: 400;
+  margin-left: 2px;
 }
 
 .task-list h3 {
@@ -90,7 +99,7 @@
   display: none;
   flex-direction: column;
   background-color: #FFFFFF;
-  bottom: 170px;
+  bottom: 520px;
   border-radius: 10px;
   letter-spacing: 0px;
 }
@@ -151,7 +160,7 @@
   padding: 10px;
   position: relative;
   margin: 8px;
-  bottom: 240px;
+  bottom: 620px;
   text-align: center;
   box-shadow: rgba(99, 99, 99, 0.2) 10px 20px 100px 100px;
 }
