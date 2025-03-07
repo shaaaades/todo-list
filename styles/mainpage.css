@@ -50,6 +50,7 @@
 .task-container-wrapper {
   overflow-y: auto;
   max-height: 450px;
+  height: 450px;
   margin-top: 10px;
 }
 
@@ -163,4 +164,16 @@
   bottom: 620px;
   text-align: center;
   box-shadow: rgba(99, 99, 99, 0.2) 10px 20px 100px 100px;
+}
+
+#no-tasks-container {
+  height: 450px;
+}
+
+#no-tasks-container h1 {
+  color: #000;
+  font-size: 18px;
+  font-weight: 400;
+  margin-top: 10px;
+  text-align: center;
 }

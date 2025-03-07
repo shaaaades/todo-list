@@ -7,14 +7,9 @@ const form = document.getElementById("add-task-modal");
 const task = document.getElementById("add-task");
 const closeIcon = document.getElementById("close-icon");
 const mainpageContainer = document.getElementById("mainpage-container");
-const taskList = document.getElementById("task-list");
-const body = document.getElementById("bootstrap-overrides");
 
 let retrievedTasks = localStorage.getItem("taskDetails");
 let updatedTasks = JSON.parse(retrievedTasks);
-
-console.log("r", retrievedTasks);
-console.log("u", updatedTasks)
 
 addTask.addEventListener("click", function(e) {
   e.preventDefault();
@@ -43,6 +38,7 @@ addTask.addEventListener("click", function(e) {
         document.getElementById("error-message").remove();
       }, 3000);
     } 
+    return;
   } 
 
   // Retrieve tasks before adding a new task
@@ -53,8 +49,8 @@ addTask.addEventListener("click", function(e) {
     localStorage.setItem("taskDetails", JSON.stringify(taskDetails));
   }
 
-  // Check if the tasks are successfully saved
-  if (retrievedTasks) {
+  // Check if the new tasks are successfully saved
+  if (localStorage.getItem("taskDetails") !== null) {
     form.style.display = "none"
     form.reset();
 
@@ -69,32 +65,10 @@ addTask.addEventListener("click", function(e) {
     setTimeout(function(){
       document.getElementById("popup-message").remove();
       mainpageContainer.style.cursor = "pointer"
+      window.location.reload();
     }, 3000);
   } 
 
-  // // Contain the task lists into one container
-  // let taskContainerWrapper = document.createElement("div");
-  // taskContainerWrapper.classList.add("task-container-wrapper");
-
-  // updatedTasks.forEach(item => {
-  //   // Create a container for every task 
-  //   let taskContainer = document.createElement("div"); 
-  //   taskContainer.setAttribute("id", "task-container");
-  //   taskContainerWrapper.appendChild(taskContainer);
-
-  //   taskContainer.innerHTML += 
-  //   `<div class="task-list">
-  //     <h1>${item.taskName}</h1>
-  //     <h3>${item.taskPriority}</h3>
-  //   </div>
-  //   <div class="task-icons">
-  //     <img src="../todo-list/assets/icons/edit-task-icon.svg" alt="Edit Task">
-  //     <img src="../todo-list/assets/icons/delete-task-icon.svg" alt="Delete Task">
-  //   </div>
-  //   `
-
-  //   document.getElementById("mainpage-date").appendChild(taskContainerWrapper);
-  // })
 })
 
 task.addEventListener("click", function() {
@@ -133,10 +107,10 @@ window.addEventListener("load", function() {
     })
   } else {
     // Display that there are no tasks displayed
-    let noTasksElement = document.createElement("div");
-    noTasksElement.setAttribute("id", "no-tasks-element");
+    let noTasksContainer = document.createElement("div");
+    noTasksContainer.setAttribute("id", "no-tasks-container");
 
-    noTasksElement.innerText = "No tasks displayed"
-    document.getElementById("mainpage-date").appendChild(noTasksElement);
+    noTasksContainer.innerHTML = `<h1>No tasks available. </h1>`;
+    document.getElementById("mainpage-date").appendChild(noTasksContainer);
   }
 })
