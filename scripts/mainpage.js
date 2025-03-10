@@ -22,7 +22,7 @@ addTask.addEventListener("click", function(e) {
   let taskDetails = [{
     taskName,
     taskDate,
-    taskPriority
+    taskPriority,
   }]
 
   // Validate input fields when empty
@@ -42,12 +42,9 @@ addTask.addEventListener("click", function(e) {
   } 
 
   // Retrieve tasks before adding a new task
-  if(retrievedTasks !== null) {
-    let tasks = [...updatedTasks, ...taskDetails];
-    localStorage.setItem("taskDetails", JSON.stringify(tasks));
-  } else {
-    localStorage.setItem("taskDetails", JSON.stringify(taskDetails));
-  }
+  const tasks = [...(updatedTasks ?? []), ...taskDetails];
+  localStorage.setItem("taskDetails", JSON.stringify(tasks));
+
 
   // Check if the new tasks are successfully saved
   if (localStorage.getItem("taskDetails") !== null) {
@@ -86,20 +83,23 @@ window.addEventListener("load", function() {
   taskContainerWrapper.classList.add("task-container-wrapper");
 
   if(updatedTasks !== null) {
+    // Sort the tasks by date before displaying to the main page
+    updatedTasks.sort((first, next) => new Date(first.taskDate) - new Date(next.taskDate));
+    
+    // Display the updated and sorted tasks
     updatedTasks.forEach(item => {
-      // Create a container for every task 
       let taskContainer = document.createElement("div"); 
       taskContainer.setAttribute("id", "task-container");
       taskContainerWrapper.appendChild(taskContainer);
-  
+
       taskContainer.innerHTML += 
       `<div class="task-list">
         <h1>${item.taskName}</h1>
         <h3>${item.taskPriority}</h3>
       </div>
       <div class="task-icons">
-        <img src="../todo-list/assets/icons/edit-task-icon.svg" alt="Edit Task">
-        <img src="../todo-list/assets/icons/delete-task-icon.svg" alt="Delete Task">
+        <img src="../todo-list/assets/icons/edit-task-icon.svg" id="edit-task-icon" alt="Edit Task">
+        <img src="../todo-list/assets/icons/delete-task-icon.svg" id="delete-task-icon" alt="Delete Task">
       </div>
       `
   
