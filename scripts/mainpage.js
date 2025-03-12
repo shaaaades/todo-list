@@ -16,7 +16,7 @@ addTask.addEventListener("click", function(e) {
 
   // Get the values of the input fields
   taskName = taskNameElem.value;
-  taskDate = taskDateElem.value;
+  taskDate = new Date(taskDateElem.value); // recheck
   taskPriority = taskPriorityElem.value;
 
   let taskDetails = [{
@@ -39,13 +39,31 @@ addTask.addEventListener("click", function(e) {
       }, 3000);
     } 
     return;
-  } 
+  } else if (taskDate) {
+    // Validate date format
+    // 2025-02-25 => Tuesday, February 25, 2025
+    let day = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    let month = ["January","February","March","April","May","June","July","August", "September", "October", "November", "December"]
+
+    let year = taskDate.getFullYear();
+    let monthIndex = month[taskDate.getMonth()];
+    let dayIndex = day[taskDate.getDay()];
+    let dateIndex = taskDate.getDate()
+
+    console.log("Task Date format: ", day[taskDate.getDay()])
+    console.log("Month: ", month[taskDate.getMonth()])
+    console.log("Date: ", taskDate.getDate())
+    console.log("Year: ", taskDate.getFullYear())
+
+    taskDate = `${dayIndex}, ${monthIndex} ${dateIndex} ${year}`
+  }
+
+
 
   // Retrieve tasks before adding a new task
   const tasks = [...(updatedTasks ?? []), ...taskDetails];
   localStorage.setItem("taskDetails", JSON.stringify(tasks));
-
-
+  
   // Check if the new tasks are successfully saved
   if (localStorage.getItem("taskDetails") !== null) {
     form.style.display = "none"
@@ -81,32 +99,50 @@ window.addEventListener("load", function() {
   // Contain the task lists into one container
   let taskContainerWrapper = document.createElement("div");
   taskContainerWrapper.classList.add("task-container-wrapper");
+  let groupedTasks = {};
+  /* Has the format:
+      { "2024-05-14": [{ taskName: "Study", taskDate: "2024-05-14",taskPriority: "High" }] } */
 
   if(updatedTasks !== null) {
     // Sort the tasks by date before displaying to the main page
-    updatedTasks.sort((first, next) => new Date(first.taskDate) - new Date(next.taskDate));
-    
-    // Display the updated and sorted tasks
-    updatedTasks.forEach(item => {
-      let taskContainer = document.createElement("div"); 
-      taskContainer.setAttribute("id", "task-container");
-      taskContainerWrapper.appendChild(taskContainer);
+    updatedTasks.sort((first, next) => new Date(first.taskDate) - new Date(next.taskDate)); //recheck
 
-      taskContainer.innerHTML += 
-      `<div class="task-list">
-        <h1>${item.taskName}</h1>
-        <h3>${item.taskPriority}</h3>
-      </div>
-      <div class="task-icons">
-        <img src="../todo-list/assets/icons/edit-task-icon.svg" id="edit-task-icon" alt="Edit Task">
-        <img src="../todo-list/assets/icons/delete-task-icon.svg" id="delete-task-icon" alt="Delete Task">
-      </div>
-      `
-  
-      document.getElementById("mainpage-date").appendChild(taskContainerWrapper);
+    // Group tasks by date before displaying
+    updatedTasks?.forEach(item => {
+      groupedTasks[item.taskDate] ? groupedTasks[item.taskDate].push(item) : groupedTasks[item.taskDate] = [item]
     })
+
+    // Get the key (dates) from the array and create heading for the dates
+    Object.keys(groupedTasks).forEach(date => {
+      let taskDate = document.createElement("div");
+      taskDate.classList.add("mainpage-date");
+
+      taskDate.innerText = date;
+
+      document.getElementById("mainpage-subtitle").appendChild(taskContainerWrapper);
+      taskContainerWrapper.appendChild(taskDate)
+
+      // Create separate containers for each task by date and display them accordingly
+      for (let key in groupedTasks[date]) {
+        let taskContainer = document.createElement("div"); 
+        taskContainer.setAttribute("id", "task-container");
+        taskContainerWrapper.appendChild(taskContainer);
+
+        taskContainer.innerHTML += 
+        `<div class="task-list">
+          <h1>${groupedTasks[date][key].taskName}</h1>
+          <h3>${groupedTasks[date][key].taskPriority}</h3>
+        </div>
+        <div class="task-icons">
+          <img src="../todo-list/assets/icons/edit-task-icon.svg" id="edit-task-icon" alt="Edit Task">
+          <img src="../todo-list/assets/icons/delete-task-icon.svg" id="delete-task-icon" alt="Delete Task">
+        </div>
+        `
+      }
+    });
+
   } else {
-    // Display that there are no tasks displayed
+    // Display that there are no tasks 
     let noTasksContainer = document.createElement("div");
     noTasksContainer.setAttribute("id", "no-tasks-container");
 
