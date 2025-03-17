@@ -7,6 +7,7 @@ const form = document.getElementById("add-task-modal");
 const task = document.getElementById("add-task");
 const closeIcon = document.getElementById("close-icon");
 const mainpageContainer = document.getElementById("mainpage-container");
+import formatDate from "./helper.js"
 
 let retrievedTasks = localStorage.getItem("taskDetails");
 let updatedTasks = JSON.parse(retrievedTasks);
@@ -16,7 +17,7 @@ addTask.addEventListener("click", function(e) {
 
   // Get the values of the input fields
   taskName = taskNameElem.value;
-  taskDate = new Date(taskDateElem.value); // recheck
+  taskDate = taskDateElem.value; 
   taskPriority = taskPriorityElem.value;
 
   let taskDetails = [{
@@ -39,26 +40,7 @@ addTask.addEventListener("click", function(e) {
       }, 3000);
     } 
     return;
-  } else if (taskDate) {
-    // Validate date format
-    // 2025-02-25 => Tuesday, February 25, 2025
-    let day = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-    let month = ["January","February","March","April","May","June","July","August", "September", "October", "November", "December"]
-
-    let year = taskDate.getFullYear();
-    let monthIndex = month[taskDate.getMonth()];
-    let dayIndex = day[taskDate.getDay()];
-    let dateIndex = taskDate.getDate()
-
-    console.log("Task Date format: ", day[taskDate.getDay()])
-    console.log("Month: ", month[taskDate.getMonth()])
-    console.log("Date: ", taskDate.getDate())
-    console.log("Year: ", taskDate.getFullYear())
-
-    taskDate = `${dayIndex}, ${monthIndex} ${dateIndex} ${year}`
-  }
-
-
+  } 
 
   // Retrieve tasks before adding a new task
   const tasks = [...(updatedTasks ?? []), ...taskDetails];
@@ -105,7 +87,7 @@ window.addEventListener("load", function() {
 
   if(updatedTasks !== null) {
     // Sort the tasks by date before displaying to the main page
-    updatedTasks.sort((first, next) => new Date(first.taskDate) - new Date(next.taskDate)); //recheck
+    updatedTasks.sort((first, next) => new Date(first.taskDate) - new Date(next.taskDate)); 
 
     // Group tasks by date before displaying
     updatedTasks?.forEach(item => {
@@ -114,13 +96,13 @@ window.addEventListener("load", function() {
 
     // Get the key (dates) from the array and create heading for the dates
     Object.keys(groupedTasks).forEach(date => {
-      let taskDate = document.createElement("div");
-      taskDate.classList.add("mainpage-date");
+      let mainpageDate = document.createElement("div");
+      mainpageDate.classList.add("mainpage-date");
 
-      taskDate.innerText = date;
+      mainpageDate.innerText = formatDate(new Date(date));
 
       document.getElementById("mainpage-subtitle").appendChild(taskContainerWrapper);
-      taskContainerWrapper.appendChild(taskDate)
+      taskContainerWrapper.appendChild(mainpageDate)
 
       // Create separate containers for each task by date and display them accordingly
       for (let key in groupedTasks[date]) {
