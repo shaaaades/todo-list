@@ -81,48 +81,83 @@ window.addEventListener("load", function() {
   // Contain the task lists into one container
   let taskContainerWrapper = document.createElement("div");
   taskContainerWrapper.classList.add("task-container-wrapper");
-  let groupedTasks = {};
-  /* Has the format:
-      { "2024-05-14": [{ taskName: "Study", taskDate: "2024-05-14",taskPriority: "High" }] } */
+  
+  // Objects are used for grouping because we categorize them using the key attribute
+  let groupedTasks = {
+    dueToday: {},
+    upcoming: {},
+    pastDue: {}
+  };
+  /* Has the format
+  {
+    "Due Today": {
+      "2024-05-15": [ { taskName: "", ... }, ... ]
+    },
+    "Upcoming": {
+      "2024-05-16": [ ... ]
+    },
+    "Past Due": {
+      "2024-05-13": [ ... ]
+    }
+  }
+  */
 
   if(updatedTasks !== null) {
     // Sort the tasks by date before displaying to the main page
     updatedTasks.sort((first, next) => new Date(first.taskDate) - new Date(next.taskDate)); 
 
-    // Group tasks by date before displaying
+    // Group tasks by category and date before displaying
     updatedTasks?.forEach(item => {
-      groupedTasks[item.taskDate] ? groupedTasks[item.taskDate].push(item) : groupedTasks[item.taskDate] = [item]
+      let taskDate = new Date(item.taskDate);
+      let dateToday = new Date()
+
+      if(formatDate(taskDate) === formatDate(dateToday)) {
+        groupedTasks.dueToday[item.taskDate] ? groupedTasks.dueToday[item.taskDate].push(item) : groupedTasks.dueToday[item.taskDate] = [item]
+      } else if (taskDate < dateToday) {
+        groupedTasks.pastDue[item.taskDate] ? groupedTasks.pastDue[item.taskDate].push(item) : groupedTasks.pastDue[item.taskDate] = [item]
+      } else {
+        groupedTasks.upcoming[item.taskDate] ? groupedTasks.upcoming[item.taskDate].push(item) : groupedTasks.upcoming[item.taskDate] = [item]
+      }
     })
 
-    // Get the key (dates) from the array and create heading for the dates
-    Object.keys(groupedTasks).forEach(date => {
-      let mainpageDate = document.createElement("div");
-      mainpageDate.classList.add("mainpage-date");
+    // Get the key category and create heading for each category
+    Object.keys(groupedTasks).forEach(category => {
+      let categoryList = document.createElement("div");
+      categoryList.className = "category"
+      categoryList.innerText = category;
 
-      mainpageDate.innerText = formatDate(new Date(date));
+      document.getElementById("mainpage-title").appendChild(taskContainerWrapper);
+      taskContainerWrapper.appendChild(categoryList);
 
-      document.getElementById("mainpage-subtitle").appendChild(taskContainerWrapper);
-      taskContainerWrapper.appendChild(mainpageDate)
+      // Get the key (dates) and create heading for the dates
+      Object.keys(groupedTasks[category]).forEach(date => {
+        let mainpageDate = document.createElement("div");
+        mainpageDate.classList.add("mainpage-date");
 
-      // Create separate containers for each task by date and display them accordingly
-      for (let key in groupedTasks[date]) {
-        let taskContainer = document.createElement("div"); 
-        taskContainer.setAttribute("id", "task-container");
-        taskContainerWrapper.appendChild(taskContainer);
+        mainpageDate.innerText = formatDate(new Date(date));
 
-        taskContainer.innerHTML += 
-        `<div class="task-list">
-          <h1>${groupedTasks[date][key].taskName}</h1>
-          <h3>${groupedTasks[date][key].taskPriority}</h3>
-        </div>
-        <div class="task-icons">
-          <img src="../todo-list/assets/icons/edit-task-icon.svg" id="edit-task-icon" alt="Edit Task">
-          <img src="../todo-list/assets/icons/delete-task-icon.svg" id="delete-task-icon" alt="Delete Task">
-        </div>
-        `
-      }
+        // document.getElementById("mainpage-title").appendChild(taskContainerWrapper);
+        taskContainerWrapper.appendChild(mainpageDate)
+
+        // Create separate containers for each task by date and display them accordingly
+        for (let key in groupedTasks[category][date]) {
+          let taskContainer = document.createElement("div"); 
+          taskContainer.setAttribute("id", "task-container");
+          taskContainerWrapper.appendChild(taskContainer);
+
+          taskContainer.innerHTML += 
+          `<div class="task-list">
+            <h1>${groupedTasks[category][date][key].taskName}</h1>
+            <h3>${groupedTasks[category][date][key].taskPriority}</h3>
+          </div>
+          <div class="task-icons">
+            <img src="../todo-list/assets/icons/edit-task-icon.svg" id="edit-task-icon" alt="Edit Task">
+            <img src="../todo-list/assets/icons/delete-task-icon.svg" id="delete-task-icon" alt="Delete Task">
+          </div>
+          `
+        }
+      });
     });
-
   } else {
     // Display that there are no tasks 
     let noTasksContainer = document.createElement("div");
