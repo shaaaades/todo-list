@@ -124,8 +124,20 @@ window.addEventListener("load", function() {
     Object.keys(groupedTasks).forEach(category => {
       let categoryList = document.createElement("div");
       categoryList.className = "category"
-      categoryList.innerText = category;
-
+      
+      // If a category is empty
+      if (Object.keys(groupedTasks[category]).length === 0) {
+        categoryList.style.display = "none"
+      } else {
+        if (category === "dueToday") {
+          categoryList.innerText = "Today's Quest"
+        } else if (category === "upcoming") {
+          categoryList.innerText = "Coming Up!"
+        } else {
+          categoryList.innerText = "Uh-oh! You Missed This..."
+        }
+      }
+      
       document.getElementById("mainpage-title").appendChild(taskContainerWrapper);
       taskContainerWrapper.appendChild(categoryList);
 
