@@ -1,4 +1,4 @@
-let taskName, taskDate, taskPriority;
+let taskName, taskDate, taskPriority, taskId;
 const taskNameElem = document.querySelector("#task-name");
 const taskDateElem = document.querySelector("#task-date")
 const taskPriorityElem = document.querySelector("#task-priority");
@@ -7,65 +7,73 @@ const form = document.getElementById("add-task-modal");
 const task = document.getElementById("add-task");
 const closeIcon = document.getElementById("close-icon");
 const mainpageContainer = document.getElementById("mainpage-container");
-import formatDate from "./helper.js"
+import { formatDate, getCategoryLabel } from "./helper.js"
+import { v4 as uuidv4 } from "https://cdn.skypack.dev/uuid@11.1.0";
 
+let isEditing = false; // Add tasks by default
+let editingTaskId = null; // No task is being edited yet.
 let retrievedTasks = localStorage.getItem("taskDetails");
 let updatedTasks = JSON.parse(retrievedTasks);
+
 
 addTask.addEventListener("click", function(e) {
   e.preventDefault();
 
   // Get the values of the input fields
+  taskId = uuidv4();
   taskName = taskNameElem.value;
   taskDate = taskDateElem.value; 
   taskPriority = taskPriorityElem.value;
 
   let taskDetails = [{
+    taskId,
     taskName,
     taskDate,
     taskPriority,
   }]
 
-  // Validate input fields when empty
-  if (taskName === "" || taskDate === "" || taskPriority === "") {
-    if (!document.getElementById("error-message")){
-      let errorMessage = document.createElement("p");
-      errorMessage.setAttribute("id", "error-message");
-      errorMessage.innerText = "Please fill in all fields to proceed."
+  if (!isEditing) {
+    // Add a new task
+    // Validate input fields when empty
+    if (taskId === "" || taskName === "" || taskDate === "" || taskPriority === "") {
+      if (!document.getElementById("error-message")){
+        let errorMessage = document.createElement("p");
+        errorMessage.setAttribute("id", "error-message");
+        errorMessage.innerText = "Please fill in all fields to proceed."
 
-      addTask.parentNode.insertBefore(errorMessage, addTask.nextSibling);
+        addTask.parentNode.insertBefore(errorMessage, addTask.nextSibling);
+
+        setTimeout(function(){
+          document.getElementById("error-message").remove();
+        }, 3000);
+      } 
+      return;
+    } 
+
+    // Retrieve tasks before adding a new task
+    const tasks = [...(updatedTasks ?? []), ...taskDetails];
+    localStorage.setItem("taskDetails", JSON.stringify(tasks));
+    
+    // Check if the new tasks are successfully saved
+    if (localStorage.getItem("taskDetails") !== null) {
+      form.style.display = "none"
+      form.reset();
+
+      // To show confirmation message once task is added successfully
+      let popupMessage = document.createElement("p");
+      popupMessage.setAttribute("id", "popup-message")
+      popupMessage.innerText = "Task added successfully.";
+      mainpageContainer.style.cursor = "not-allowed"
+
+      form.parentNode.insertBefore(popupMessage, form.nextSibling);
 
       setTimeout(function(){
-        document.getElementById("error-message").remove();
+        document.getElementById("popup-message").remove();
+        mainpageContainer.style.cursor = "pointer"
+        window.location.reload();
       }, 3000);
     } 
-    return;
-  } 
-
-  // Retrieve tasks before adding a new task
-  const tasks = [...(updatedTasks ?? []), ...taskDetails];
-  localStorage.setItem("taskDetails", JSON.stringify(tasks));
-  
-  // Check if the new tasks are successfully saved
-  if (localStorage.getItem("taskDetails") !== null) {
-    form.style.display = "none"
-    form.reset();
-
-    // To show confirmation message once task is added successfully
-    let popupMessage = document.createElement("p");
-    popupMessage.setAttribute("id", "popup-message")
-    popupMessage.innerText = "Task added successfully.";
-    mainpageContainer.style.cursor = "not-allowed"
-
-    form.parentNode.insertBefore(popupMessage, form.nextSibling);
-
-    setTimeout(function(){
-      document.getElementById("popup-message").remove();
-      mainpageContainer.style.cursor = "pointer"
-      window.location.reload();
-    }, 3000);
-  } 
-
+  }
 })
 
 task.addEventListener("click", function() {
@@ -89,18 +97,11 @@ window.addEventListener("load", function() {
     pastDue: {}
   };
   /* Has the format
-  {
-    "Due Today": {
-      "2024-05-15": [ { taskName: "", ... }, ... ]
-    },
-    "Upcoming": {
-      "2024-05-16": [ ... ]
-    },
-    "Past Due": {
-      "2024-05-13": [ ... ]
-    }
-  }
-  */
+  { 
+    "Due Today": { "2024-05-15": [ { taskName: "", ... }, ... ]},
+    "Upcoming": { "2024-05-16": [ ... ]},
+    "Past Due": { "2024-05-13": [ ... ]}
+  }*/
 
   if(updatedTasks !== null) {
     // Sort the tasks by date before displaying to the main page
@@ -128,15 +129,8 @@ window.addEventListener("load", function() {
       // If a category is empty
       if (Object.keys(groupedTasks[category]).length === 0) {
         categoryList.style.display = "none"
-      } else {
-        if (category === "dueToday") {
-          categoryList.innerText = "Today's Quest"
-        } else if (category === "upcoming") {
-          categoryList.innerText = "Coming Up!"
-        } else {
-          categoryList.innerText = "Uh-oh! You Missed This..."
-        }
-      }
+      } 
+        categoryList.innerText = getCategoryLabel(category)
       
       document.getElementById("mainpage-title").appendChild(taskContainerWrapper);
       taskContainerWrapper.appendChild(categoryList);
@@ -163,19 +157,35 @@ window.addEventListener("load", function() {
             <h3>${groupedTasks[category][date][key].taskPriority}</h3>
           </div>
           <div class="task-icons">
-            <img src="../todo-list/assets/icons/edit-task-icon.svg" id="edit-task-icon" alt="Edit Task">
+            <img src="../todo-list/assets/icons/edit-task-icon.svg" data-task-name=${groupedTasks[category][date][key].taskName}
+            data-task-id=${groupedTasks[category][date][key].taskId} id="edit-task-icon" alt="Edit Task">
             <img src="../todo-list/assets/icons/delete-task-icon.svg" id="delete-task-icon" alt="Delete Task">
           </div>
           `
         }
       });
     });
+
+    
+    let editTask = document.querySelectorAll("[data-task-name]");
+    editTask.forEach(taskIcon => {
+      taskIcon.addEventListener("click", function() {
+        form.style.display = "flex"
+
+        isEditing = true;
+        editingTaskId = taskIcon.attributes[3].value;
+
+        console.log("editingTaskId", editingTaskId)
+      })
+    })
+
+
   } else {
     // Display that there are no tasks 
     let noTasksContainer = document.createElement("div");
     noTasksContainer.setAttribute("id", "no-tasks-container");
 
     noTasksContainer.innerHTML = `<h1>No tasks available. </h1>`;
-    document.getElementById("mainpage-date").appendChild(noTasksContainer);
+    document.getElementById("mainpage-title").appendChild(noTasksContainer);
   }
 })
