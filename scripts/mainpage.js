@@ -32,7 +32,6 @@ addTask.addEventListener("click", function(e) {
     taskPriority,
   }]
 
-  if (!isEditing) {
     // Add a new task
     // Validate input fields when empty
     if (taskId === "" || taskName === "" || taskDate === "" || taskPriority === "") {
@@ -73,7 +72,6 @@ addTask.addEventListener("click", function(e) {
         window.location.reload();
       }, 3000);
     } 
-  }
 })
 
 task.addEventListener("click", function() {
@@ -142,7 +140,6 @@ window.addEventListener("load", function() {
 
         mainpageDate.innerText = formatDate(new Date(date));
 
-        // document.getElementById("mainpage-title").appendChild(taskContainerWrapper);
         taskContainerWrapper.appendChild(mainpageDate)
 
         // Create separate containers for each task by date and display them accordingly
@@ -157,8 +154,12 @@ window.addEventListener("load", function() {
             <h3>${groupedTasks[category][date][key].taskPriority}</h3>
           </div>
           <div class="task-icons">
-            <img src="../todo-list/assets/icons/edit-task-icon.svg" data-task-name=${groupedTasks[category][date][key].taskName}
-            data-task-id=${groupedTasks[category][date][key].taskId} id="edit-task-icon" alt="Edit Task">
+            <img src="../todo-list/assets/icons/edit-task-icon.svg" 
+              data-task-name="${groupedTasks[category][date][key].taskName}"
+              data-task-id="${groupedTasks[category][date][key].taskId}" 
+              data-task-date="${groupedTasks[category][date][key].taskDate}" 
+              data-task-priority="${groupedTasks[category][date][key].taskPriority}" 
+              id="edit-task-icon" alt="Edit Task">
             <img src="../todo-list/assets/icons/delete-task-icon.svg" id="delete-task-icon" alt="Delete Task">
           </div>
           `
@@ -170,12 +171,15 @@ window.addEventListener("load", function() {
     let editTask = document.querySelectorAll("[data-task-name]");
     editTask.forEach(taskIcon => {
       taskIcon.addEventListener("click", function() {
+        isEditing = true;
+        editingTaskId = taskIcon.getAttribute("data-task-id");
         form.style.display = "flex"
 
-        isEditing = true;
-        editingTaskId = taskIcon.attributes[3].value;
-
-        console.log("editingTaskId", editingTaskId)
+        console.log(taskIcon.attributes)
+        console.log(taskIcon.getAttribute("data-task-date"))
+        document.getElementById("task-name").value = taskIcon.getAttribute("data-task-name")
+        document.getElementById("task-priority").value = taskIcon.getAttribute("data-task-priority")
+        document.getElementById("task-date").value = taskIcon.getAttribute("data-task-date")
       })
     })
 
