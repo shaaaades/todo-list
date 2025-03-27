@@ -23,8 +23,8 @@
 }
 
 .category {
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 600;
   letter-spacing: 0.5px;
   margin: 20px 0;
 }
@@ -131,7 +131,7 @@
   font-size: 14px;
 }
 
-.add-task-button {
+.task-action-button {
   margin-top: 20px;
   margin-bottom: 10px;
   border-radius: 10px;
@@ -163,7 +163,7 @@
   padding: 10px;
   position: relative;
   margin: 80px 8px;
-  bottom: 620px;
+  bottom: 670px;
   text-align: center;
   box-shadow: rgba(99, 99, 99, 0.2) 10px 20px 100px 100px;
 }

@@ -13,9 +13,9 @@ export function formatDate(date) {
 
 export function getCategoryLabel (category) {
   const labels = {
-    dueToday: "Today's Quest",
-    upcoming: "Coming Up!",
-    pastDue: "Uh-oh! You Missed This..."
+    dueToday: "TODAY'S QUEST",
+    upcoming: "UPCOMING TASKS",
+    pastDue: "UH-OH! YOU MISSED THIS..."
   }
   return labels[category];
 }
