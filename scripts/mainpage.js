@@ -3,10 +3,13 @@ const taskNameElem = document.querySelector("#task-name");
 const taskDateElem = document.querySelector("#task-date")
 const taskPriorityElem = document.querySelector("#task-priority");
 const taskAction = document.getElementById("task-action-button");
-const form = document.getElementById("add-task-modal");
+const addTaskForm = document.getElementById("add-task-modal");
+const deleteTaskForm = document.getElementById("delete-task-modal");
 const task = document.getElementById("add-task");
 const closeIcon = document.getElementById("close-icon");
 const mainpageContainer = document.getElementById("mainpage-container");
+const cancelButton = document.getElementById("cancel-button");
+const confirmButton = document.getElementById("confirm-button")
 import { formatDate, getCategoryLabel } from "./helper.js"
 import { v4 as uuidv4 } from "https://cdn.skypack.dev/uuid@11.1.0";
 
@@ -66,8 +69,8 @@ taskAction.addEventListener("click", function(e) {
 
   // Check if the new tasks are successfully saved
   if (localStorage.getItem("taskDetails") !== null) {
-    form.style.display = "none"
-    form.reset();
+    addTaskForm.style.display = "none"
+    addTaskForm.reset();
 
     // To show confirmation message once task is added or updated successfully
     let popupMessage = document.createElement("p");
@@ -75,7 +78,7 @@ taskAction.addEventListener("click", function(e) {
     isEditing ? popupMessage.innerText = "Task updated successfully." : popupMessage.innerText = "Task added successfully."
     mainpageContainer.style.cursor = "not-allowed"
 
-    form.parentNode.insertBefore(popupMessage, form.nextSibling);
+    addTaskForm.parentNode.insertBefore(popupMessage, addTaskForm.nextSibling);
 
     setTimeout(function(){
       document.getElementById("popup-message").remove();
@@ -87,15 +90,20 @@ taskAction.addEventListener("click", function(e) {
 
 // To show task modal when add icon is clicked
 task.addEventListener("click", function() {
-  form.style.display = "flex"
+  addTaskForm.style.display = "flex"
   taskAction.innerText = "Add Task"
 })
 
 // To hide task modal when close icon is clicked
 // Form resets
 closeIcon.addEventListener("click", function() {
-  form.style.display = "none"
-  form.reset();
+  addTaskForm.style.display = "none"
+  addTaskForm.reset();
+})
+
+// To hide delete task modal when cancel button is clicked
+cancelButton.addEventListener("click", function() {
+  deleteTaskForm.style.display = "none"
 })
 
 // Once window is loaded, show the task display in real-time
@@ -177,7 +185,9 @@ window.addEventListener("load", function() {
               data-task-priority="${groupedTasks[category][date][key].taskPriority}"
               data-task-date="${groupedTasks[category][date][key].taskDate}"
               id="edit-task-icon" alt="Edit Task">
-            <img src="../todo-list/assets/icons/delete-task-icon.svg" id="delete-task-icon" alt="Delete Task">
+            <img src="../todo-list/assets/icons/delete-task-icon.svg" 
+            data-task-id="${groupedTasks[category][date][key].taskId}"
+            id="delete-task-icon" alt="Delete Task">
           </div>
           `
         }
@@ -185,12 +195,12 @@ window.addEventListener("load", function() {
     });
  
     // Perform the edit task functionality
-    const editTask = document.querySelectorAll("[data-task-name]");
+    const editTask = document.querySelectorAll("#edit-task-icon");
     editTask.forEach(taskIcon => {
       taskIcon.addEventListener("click", function() {
         isEditing = true;
         editingTaskId = taskIcon.getAttribute("data-task-id");
-        form.style.display = "flex"
+        addTaskForm.style.display = "flex"
         taskAction.innerText = "Edit Task"
 
         const existingTask = updatedTasks.find(task => task.taskId === editingTaskId)
@@ -200,6 +210,24 @@ window.addEventListener("load", function() {
           document.getElementById("task-date").value = taskIcon.getAttribute("data-task-date");
           document.getElementById("task-priority").value = taskIcon.getAttribute("data-task-priority");
         }
+      })
+    })
+
+    // Perform the delete task functionality
+    const deleteTask = document.querySelectorAll("#delete-task-icon");
+    deleteTask.forEach(deleteTaskIcon => {
+      deleteTaskIcon.addEventListener("click", function() {
+        let selectedTaskId = deleteTaskIcon.getAttribute("data-task-id");
+        deleteTaskForm.style.display = "flex"
+
+        confirmButton.addEventListener("click", function() {
+          updatedTasks = updatedTasks.filter((task) => task.taskId !== selectedTaskId)
+          localStorage.setItem("taskDetails", JSON.stringify(updatedTasks));
+          deleteTaskForm.style.display = "none"
+          window.location.reload();
+          console.log(updatedTasks)
+        })
+        
       })
     })
 
