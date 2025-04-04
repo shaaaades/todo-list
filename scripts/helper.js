@@ -19,3 +19,21 @@ export function getCategoryLabel (category) {
   }
   return labels[category];
 }
+
+// To show confirmation message once task is added or updated successfully
+export function showPopupMessage(message) {
+  const mainpageContainer = document.getElementById("mainpage-container");
+  const addTaskForm = document.getElementById("add-task-modal");
+  let popupMessage = document.createElement("p");
+
+  popupMessage.setAttribute("id", "popup-message")
+  popupMessage.innerText = message;
+  mainpageContainer.style.pointerEvents = "none"
+  addTaskForm.parentNode.insertBefore(popupMessage, addTaskForm.nextSibling);
+
+  setTimeout(function(){
+    document.getElementById("popup-message").remove();
+    mainpageContainer.style.cursor = "pointer"
+    window.location.reload();
+  }, 3000);
+}
