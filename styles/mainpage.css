@@ -54,6 +54,15 @@
   margin-top: 20px;
 }
 
+.task-list {
+  display: flex;
+  flex-direction: row;
+}
+
+.task-list input {
+  margin: 0 6px 40px 0;
+}
+
 .task-list h1{
   font-size: 14px;
   font-weight: 400;

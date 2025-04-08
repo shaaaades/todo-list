@@ -170,8 +170,11 @@ window.addEventListener("load", function() {
 
           taskContainer.innerHTML += 
           `<div class="task-list">
-            <h1>${groupedTasks[category][date][key].taskName}</h1>
-            <h3>${groupedTasks[category][date][key].taskPriority}</h3>
+            <input type="checkbox" data-task-id="${groupedTasks[category][date][key].taskId}" id="complete-task-icon" alt="Complete Task">
+            <div>
+              <h1>${groupedTasks[category][date][key].taskName}</h1>
+              <h3>${groupedTasks[category][date][key].taskPriority}</h3>
+            </div>
           </div>
           <div class="task-icons">
             <img src="../todo-list/assets/icons/edit-task-icon.svg" 
@@ -191,10 +194,10 @@ window.addEventListener("load", function() {
  
     // Perform the edit task functionality
     const editTask = document.querySelectorAll("#edit-task-icon");
-    editTask.forEach(taskIcon => {
-      taskIcon.addEventListener("click", function() {
+    editTask.forEach(editTaskIcon => {
+      editTaskIcon.addEventListener("click", function() {
         isEditing = true;
-        selectedTaskId = taskIcon.getAttribute("data-task-id");
+        selectedTaskId = editTaskIcon.getAttribute("data-task-id");
         addTaskForm.style.display = "flex"
         mainpageContainer.style.pointerEvents = "none"
         taskAction.innerText = "Edit Task"
@@ -202,9 +205,9 @@ window.addEventListener("load", function() {
         const existingTask = updatedTasks.find(task => task.taskId === selectedTaskId)
 
         if (existingTask) {
-          document.getElementById("task-name").value = taskIcon.getAttribute("data-task-name");
-          document.getElementById("task-date").value = taskIcon.getAttribute("data-task-date");
-          document.getElementById("task-priority").value = taskIcon.getAttribute("data-task-priority");
+          document.getElementById("task-name").value = editTaskIcon.getAttribute("data-task-name");
+          document.getElementById("task-date").value = editTaskIcon.getAttribute("data-task-date");
+          document.getElementById("task-priority").value = editTaskIcon.getAttribute("data-task-priority");
         }
       })
     })
@@ -223,9 +226,22 @@ window.addEventListener("load", function() {
           deleteTaskForm.style.display = "none"
           showPopupMessage("Task deleted successfully.")
         })
-        
       })
     })
+
+    // Perform the complete task functionality
+    const completeTask = document.querySelectorAll("#complete-task-icon");
+    completeTask.forEach(completeTaskIcon => {
+      completeTaskIcon.addEventListener("click", function() {
+        selectedTaskId = completeTaskIcon.getAttribute("data-task-id");
+        mainpageContainer.style.pointerEvents = "none"
+        
+        updatedTasks = updatedTasks.filter((task) => task.taskId !== selectedTaskId)
+        localStorage.setItem("taskDetails", JSON.stringify(updatedTasks));
+        showPopupMessage("Task completed successfully.")
+      })
+    })
+
   } else {
     // Display that there are no tasks 
     let noTasksContainer = document.createElement("div");
