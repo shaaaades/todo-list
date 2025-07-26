@@ -10,7 +10,7 @@ const closeIcon = document.getElementById("close-icon");
 const mainpageContainer = document.getElementById("mainpage-container");
 const cancelButton = document.getElementById("cancel-button");
 const confirmButton = document.getElementById("confirm-button")
-import { formatDate, getCategoryLabel, showPopupMessage } from "./helper.js"
+import { formatDate, getCategoryLabel, showPopupMessage, displayNoTasks } from "./helper.js"
 import { v4 as uuidv4 } from "https://cdn.skypack.dev/uuid@11.1.0";
 
 let isEditing = false; // Add tasks by default
@@ -122,132 +122,131 @@ window.addEventListener("load", function() {
 
   // To display the tasks in the mainpage according to its specified category and dates
   if(updatedTasks !== null) {
-    // Sort the tasks by date before displaying to the main page
-    updatedTasks.sort((first, next) => new Date(first.taskDate) - new Date(next.taskDate)); 
+    if(updatedTasks.length !== 0) {
+        // Sort the tasks by date before displaying to the main page
+      updatedTasks.sort((first, next) => new Date(first.taskDate) - new Date(next.taskDate)); 
 
-    // Group tasks by category and date before displaying
-    updatedTasks?.forEach(item => {
-      let taskDate = new Date(item.taskDate);
-      let dateToday = new Date()
+      // Group tasks by category and date before displaying
+      updatedTasks?.forEach(item => {
+        let taskDate = new Date(item.taskDate);
+        let dateToday = new Date()
 
-      if(formatDate(taskDate) === formatDate(dateToday)) {
-        groupedTasks.dueToday[item.taskDate] ? groupedTasks.dueToday[item.taskDate].push(item) : groupedTasks.dueToday[item.taskDate] = [item]
-      } else if (taskDate < dateToday) {
-        groupedTasks.pastDue[item.taskDate] ? groupedTasks.pastDue[item.taskDate].push(item) : groupedTasks.pastDue[item.taskDate] = [item]
-      } else {
-        groupedTasks.upcoming[item.taskDate] ? groupedTasks.upcoming[item.taskDate].push(item) : groupedTasks.upcoming[item.taskDate] = [item]
-      }
-    })
-
-    // Get the key category and create heading for each category
-    Object.keys(groupedTasks).forEach(category => {
-      let categoryList = document.createElement("div");
-      categoryList.className = "category"
-      
-      // If a category is empty
-      if (Object.keys(groupedTasks[category]).length === 0) {
-        categoryList.style.display = "none"
-      } 
-
-      categoryList.innerText = getCategoryLabel(category)
-      document.getElementById("mainpage-title").appendChild(taskContainerWrapper);
-      taskContainerWrapper.appendChild(categoryList);
-
-      // Get the key (dates) and create heading for the dates
-      Object.keys(groupedTasks[category]).forEach(date => {
-        let mainpageDate = document.createElement("div");
-        mainpageDate.classList.add("mainpage-date");
-
-        mainpageDate.innerText = formatDate(new Date(date));
-
-        taskContainerWrapper.appendChild(mainpageDate)
-
-        // Create separate containers for each task by date and display them accordingly
-        for (let key in groupedTasks[category][date]) {
-          let taskContainer = document.createElement("div"); 
-          taskContainer.setAttribute("id", "task-container");
-          taskContainerWrapper.appendChild(taskContainer);
-
-          taskContainer.innerHTML += 
-          `<div class="task-list">
-            <input type="checkbox" data-task-id="${groupedTasks[category][date][key].taskId}" id="complete-task-icon" alt="Complete Task">
-            <div>
-              <h1>${groupedTasks[category][date][key].taskName}</h1>
-              <h3>${groupedTasks[category][date][key].taskPriority}</h3>
-            </div>
-          </div>
-          <div class="task-icons">
-            <img src="../todo-list/assets/icons/edit-task-icon.svg" 
-              data-task-id="${groupedTasks[category][date][key].taskId}"
-              data-task-name="${groupedTasks[category][date][key].taskName}"
-              data-task-priority="${groupedTasks[category][date][key].taskPriority}"
-              data-task-date="${groupedTasks[category][date][key].taskDate}"
-              id="edit-task-icon" alt="Edit Task">
-            <img src="../todo-list/assets/icons/delete-task-icon.svg" 
-            data-task-id="${groupedTasks[category][date][key].taskId}"
-            id="delete-task-icon" alt="Delete Task">
-          </div>
-          `
-        }
-      });
-    });
- 
-    // Perform the edit task functionality
-    const editTask = document.querySelectorAll("#edit-task-icon");
-    editTask.forEach(editTaskIcon => {
-      editTaskIcon.addEventListener("click", function() {
-        isEditing = true;
-        selectedTaskId = editTaskIcon.getAttribute("data-task-id");
-        addTaskForm.style.display = "flex"
-        mainpageContainer.style.pointerEvents = "none"
-        taskAction.innerText = "Edit Task"
-
-        const existingTask = updatedTasks.find(task => task.taskId === selectedTaskId)
-
-        if (existingTask) {
-          document.getElementById("task-name").value = editTaskIcon.getAttribute("data-task-name");
-          document.getElementById("task-date").value = editTaskIcon.getAttribute("data-task-date");
-          document.getElementById("task-priority").value = editTaskIcon.getAttribute("data-task-priority");
+        if(formatDate(taskDate) === formatDate(dateToday)) {
+          groupedTasks.dueToday[item.taskDate] ? groupedTasks.dueToday[item.taskDate].push(item) : groupedTasks.dueToday[item.taskDate] = [item]
+        } else if (taskDate < dateToday) {
+          groupedTasks.pastDue[item.taskDate] ? groupedTasks.pastDue[item.taskDate].push(item) : groupedTasks.pastDue[item.taskDate] = [item]
+        } else {
+          groupedTasks.upcoming[item.taskDate] ? groupedTasks.upcoming[item.taskDate].push(item) : groupedTasks.upcoming[item.taskDate] = [item]
         }
       })
-    })
 
-    // Perform the delete task functionality
-    const deleteTask = document.querySelectorAll("#delete-task-icon");
-    deleteTask.forEach(deleteTaskIcon => {
-      deleteTaskIcon.addEventListener("click", function() {
-        selectedTaskId = deleteTaskIcon.getAttribute("data-task-id");
-        deleteTaskForm.style.display = "flex"
-        mainpageContainer.style.pointerEvents = "none"
+      // Get the key category and create heading for each category
+      Object.keys(groupedTasks).forEach(category => {
+        let categoryList = document.createElement("div");
+        categoryList.className = "category"
+        
+        // If a category is empty
+        if (Object.keys(groupedTasks[category]).length === 0) {
+          categoryList.style.display = "none"
+        } 
 
-        confirmButton.addEventListener("click", function() {
-          updatedTasks = updatedTasks.filter((task) => task.taskId !== selectedTaskId)
-          localStorage.setItem("taskDetails", JSON.stringify(updatedTasks));
-          deleteTaskForm.style.display = "none"
-          showPopupMessage("Task deleted successfully.")
+        categoryList.innerText = getCategoryLabel(category)
+        document.getElementById("mainpage-title").appendChild(taskContainerWrapper);
+        taskContainerWrapper.appendChild(categoryList);
+
+        // Get the key (dates) and create heading for the dates
+        Object.keys(groupedTasks[category]).forEach(date => {
+          let mainpageDate = document.createElement("div");
+          mainpageDate.classList.add("mainpage-date");
+
+          mainpageDate.innerText = formatDate(new Date(date));
+
+          taskContainerWrapper.appendChild(mainpageDate)
+
+          // Create separate containers for each task by date and display them accordingly
+          for (let key in groupedTasks[category][date]) {
+            let taskContainer = document.createElement("div"); 
+            taskContainer.setAttribute("id", "task-container");
+            taskContainerWrapper.appendChild(taskContainer);
+
+            taskContainer.innerHTML += 
+            `<div class="task-list">
+              <input type="checkbox" data-task-id="${groupedTasks[category][date][key].taskId}" id="complete-task-icon" alt="Complete Task">
+              <div>
+                <h1>${groupedTasks[category][date][key].taskName}</h1>
+                <h3>${groupedTasks[category][date][key].taskPriority}</h3>
+              </div>
+            </div>
+            <div class="task-icons">
+              <img src="../assets/icons/edit-task-icon.svg" 
+                data-task-id="${groupedTasks[category][date][key].taskId}"
+                data-task-name="${groupedTasks[category][date][key].taskName}"
+                data-task-priority="${groupedTasks[category][date][key].taskPriority}"
+                data-task-date="${groupedTasks[category][date][key].taskDate}"
+                id="edit-task-icon" alt="Edit Task">
+              <img src="../assets/icons/delete-task-icon.svg" 
+              data-task-id="${groupedTasks[category][date][key].taskId}"
+              id="delete-task-icon" alt="Delete Task">
+            </div>
+            `
+          }
+        });
+      });
+  
+      // Perform the edit task functionality
+      const editTask = document.querySelectorAll("#edit-task-icon");
+      editTask.forEach(editTaskIcon => {
+        editTaskIcon.addEventListener("click", function() {
+          isEditing = true;
+          selectedTaskId = editTaskIcon.getAttribute("data-task-id");
+          addTaskForm.style.display = "flex"
+          mainpageContainer.style.pointerEvents = "none"
+          taskAction.innerText = "Edit Task"
+
+          const existingTask = updatedTasks.find(task => task.taskId === selectedTaskId)
+
+          if (existingTask) {
+            document.getElementById("task-name").value = editTaskIcon.getAttribute("data-task-name");
+            document.getElementById("task-date").value = editTaskIcon.getAttribute("data-task-date");
+            document.getElementById("task-priority").value = editTaskIcon.getAttribute("data-task-priority");
+          }
         })
       })
-    })
 
-    // Perform the complete task functionality
-    const completeTask = document.querySelectorAll("#complete-task-icon");
-    completeTask.forEach(completeTaskIcon => {
-      completeTaskIcon.addEventListener("click", function() {
-        selectedTaskId = completeTaskIcon.getAttribute("data-task-id");
-        mainpageContainer.style.pointerEvents = "none"
-        
-        updatedTasks = updatedTasks.filter((task) => task.taskId !== selectedTaskId)
-        localStorage.setItem("taskDetails", JSON.stringify(updatedTasks));
-        showPopupMessage("Task completed successfully.")
+      // Perform the delete task functionality
+      const deleteTask = document.querySelectorAll("#delete-task-icon");
+      deleteTask.forEach(deleteTaskIcon => {
+        deleteTaskIcon.addEventListener("click", function() {
+          selectedTaskId = deleteTaskIcon.getAttribute("data-task-id");
+          deleteTaskForm.style.display = "flex"
+          mainpageContainer.style.pointerEvents = "none"
+
+          confirmButton.addEventListener("click", function() {
+            updatedTasks = updatedTasks.filter((task) => task.taskId !== selectedTaskId)
+            localStorage.setItem("taskDetails", JSON.stringify(updatedTasks));
+            deleteTaskForm.style.display = "none"
+            showPopupMessage("Task deleted successfully.")
+          })
+        })
       })
-    })
 
+      // Perform the complete task functionality
+      const completeTask = document.querySelectorAll("#complete-task-icon");
+      completeTask.forEach(completeTaskIcon => {
+        completeTaskIcon.addEventListener("click", function() {
+          selectedTaskId = completeTaskIcon.getAttribute("data-task-id");
+          mainpageContainer.style.pointerEvents = "none"
+          
+          updatedTasks = updatedTasks.filter((task) => task.taskId !== selectedTaskId)
+          localStorage.setItem("taskDetails", JSON.stringify(updatedTasks));
+          showPopupMessage("Task completed successfully.")
+        })
+      })
+    } else {
+      displayNoTasks();
+    }
   } else {
-    // Display that there are no tasks 
-    let noTasksContainer = document.createElement("div");
-    noTasksContainer.setAttribute("id", "no-tasks-container");
-
-    noTasksContainer.innerHTML = `<h1>No tasks available. </h1>`;
-    document.getElementById("mainpage-title").appendChild(noTasksContainer);
+    displayNoTasks();
   }
 })
+

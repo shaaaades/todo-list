@@ -44,7 +44,7 @@ This project helped me get hands-on with:
 ## 🛠 How to Run the App
 
 1. Clone or download the repository.
-2. Open the project folder in your code editor.
+2. Open the project folder in your code editor and run `npm install` to install dependencies.
 3. Right-click on `index.html` and select **"Open with Live Server"** (if you're using VS Code and have the Live Server extension installed).
 4. The app should open in your browser.
 

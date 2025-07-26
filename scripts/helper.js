@@ -37,3 +37,13 @@ export function showPopupMessage(message) {
     window.location.reload();
   }, 3000);
 }
+
+// To display if no tasks are available
+export function displayNoTasks() {
+  // Display that there are no tasks 
+  const noTasksContainer = document.createElement("div");
+  noTasksContainer.setAttribute("id", "no-tasks-container");
+
+  noTasksContainer.innerHTML = `<h1>No tasks available. </h1>`;
+  document.getElementById("mainpage-title").appendChild(noTasksContainer);
+}
