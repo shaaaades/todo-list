@@ -16,6 +16,10 @@ This project helped me get hands-on with:
 
 ---
 
+## Design
+
+Design credits referenced from [Figma Community](https://www.figma.com/community/file/1112736756305740770)
+
 ## 📂 Project Structure
 
 ```
@@ -55,5 +59,6 @@ This project helped me get hands-on with:
 - Add, edit, and delete tasks
 - Categorize tasks by date (Past Due, Due Today, Upcoming)
 - Persistent data using **localStorage**
+- Utilizing Bootstrap for responsive design 
 
 ---
